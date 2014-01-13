@@ -279,6 +279,46 @@ function bp_album_add_network_menu() {
 add_action( 'network_admin_menu', 'bp_album_add_network_menu' );
 
 /**
+ * bp_album_setup_admin_bar()
+ *
+ * sets adminbar
+ */
+function bp_album_setup_admin_bar(){
+    global $wp_admin_bar, $bp;
+
+    $user_domain = bp_loggedin_user_domain();
+
+
+    $nav_item_name = apply_filters( 'bp_album_nav_item_name', __( 'Album', 'bp-album' ) );
+
+    $album_link = ($bp->displayed_user->id ? $bp->displayed_user->domain : $bp->loggedin_user->domain) . $bp->album->slug . '/';
+    $album_link_title = ($bp->displayed_user->id) ? bp_word_or_name( __( "My pictures", 'bp-album' ), __( "%s's pictures", 'bp-album' ) ,false,false) : __( "My pictures", 'bp-album' );
+
+
+    $wp_admin_bar->add_menu( array(
+        'parent'  => $bp->my_account_menu_id,
+        'id'      => $bp->album->slug,
+        'title'   => $nav_item_name,
+        'href'    => trailingslashit( $album_link )
+    ) );
+
+    $wp_admin_bar->add_menu( array(
+            'parent'  => $bp->album->slug,
+            'id'      => $bp->album->pictures_slug,
+            'title'   => $album_link_title,
+            'href'    => trailingslashit( $album_link )
+        )
+    );
+
+    $wp_admin_bar->add_menu( array(
+        'parent'  => $bp->album->slug,
+        'id'      => $bp->album->upload_slug,
+        'title'   => __( 'Upload picture', 'bp-album' ),
+        'href'    => trailingslashit( $album_link.$bp->album->upload_slug )
+    ));
+}
+add_action( 'bp_setup_admin_bar', 'bp_album_setup_admin_bar', 300 );
+/**
  * bp_album_setup_nav()
  *
  * Sets up the user profile navigation items for the component. This adds the top level nav
@@ -341,6 +381,7 @@ function bp_album_setup_nav() {
 add_action( 'bp_setup_nav', 'bp_album_setup_nav' );
 
  }
+
 
 /**
  * bp_album_single_subnav_filter()
